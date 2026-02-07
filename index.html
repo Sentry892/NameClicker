@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clicker Game</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Left side -->
+    <div class="counter-box">
+      <p class="counter">0</p>
+      <p class="name">-</p>
+      <p class="cps">CPS: 0</p>
+      <p id="totalClicks">Total: 0</p>
+      <p id="playtime">0s</p>
+      <button class="clicker" id="clickBtn">Click</button>
+      <button class="collection-btn" id="collectionBtn">Collection</button>
+    </div>
+
+    <!-- Right side -->
+    <div class="upgrades">
+      <button class="upgrade1" id="upgrade1">+3 CPS (50)</button>
+      <button class="upgrade2" id="upgrade2">+10 CPS (1000)</button>
+      <button class="upgrade3" id="upgrade3">+100 CPS (5000)</button>
+      <button class="upgradeKirill" id="upgradeKirill">Kirill x1.2 (500)</button>
+      <button class="reset-btn" id="resetBtn">Reset</button>
+    </div>
+  </div>
+  <div id="collectionModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Collection</h2>
+      <div id="collectionList" class="collection-list"></div>
+    </div>
+  </div>
+
+  <script src="collection.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
+
+ 

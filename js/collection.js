@@ -2,6 +2,10 @@ function getNameCollection() {
   return window.nameCollection || {};
 }
 
+function getNamePoints() {
+  return window.namePoints || {};
+}
+
 // Collection modal
 const modal = document.getElementById('collectionModal');
 const closeBtn = document.querySelector('.close');
@@ -35,6 +39,7 @@ function updateCollectionDisplay() {
   collectionList.innerHTML = '';
 
   const nameCollection = getNameCollection();
+  const namePoints = getNamePoints();
   if (Object.keys(nameCollection).length === 0) {
     collectionList.innerHTML = '<p style="text-align: center; color: #999;">No names discovered yet!</p>';
     return;
@@ -43,11 +48,12 @@ function updateCollectionDisplay() {
   const sortedNames = Object.entries(nameCollection).sort((a, b) => b[1] - a[1]);
   
   sortedNames.forEach(([name, count]) => {
+    const points = namePoints[name] || 0;
     const item = document.createElement('div');
     item.className = 'collection-item';
     item.innerHTML = `
       <span class="collection-item-name">${name}</span>
-      <span class="collection-item-count">${count} ${count === 1 ? 'time' : 'times'}</span>
+      <span class="collection-item-count">Clicks: ${count} · Points: ${points}</span>
     `;
     collectionList.appendChild(item);
   });

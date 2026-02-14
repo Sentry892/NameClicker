@@ -8,6 +8,7 @@ let plastReward = document.getElementById("lastReward");
 let ptopNamePoints = document.getElementById("topNamePoints");
 let ptopNameClicks = document.getElementById("topNameClicks");
 let pavgReward = document.getElementById("avgReward");
+let pstreak = document.getElementById("streak");
 
 let names = {
   Kevin: 50,
@@ -56,7 +57,24 @@ let names = {
   Megumi: 20,
   Wayne: 50,
   Yuta: 10,
-  Yuji: 23,  
+  Yuji: 23,
+  Sofia: 18,
+  Daniel: 40,
+  Maria: 22,
+  Victor: 28,
+  Iris: 12,
+  Logan: 33,
+  Nora: 15,
+  Oscar: 20,
+  Quinn: 6,
+  Zane: 9,
+  Vera: 14,
+  Luna: 7,
+  Miles: 17,
+  Hazel: 11,
+  Axel: 8,
+  Zoe: 13,
+  Nova: 5,
 };
 
 // Points per click by name (fallback uses weight-based scaling).
@@ -77,7 +95,15 @@ let upgrade2Cost = 1000;
 let upgrade3Cost = 5000;
 let upgrade4Cost = 25000;
 let upgrade5Cost = 125000;
+let upgrade6Cost = 250000;
+let upgrade7Cost = 1000000;
+let upgrade8Cost = 5000000;
 let lastReward = 0;
+let streak = 0;
+let streakMultiplier = 1;
+let lastClickAt = 0;
+let finalUpgradeCost = 20000000;
+let finalUpgradeOwned = false;
 
 // Kirill chance upgrade
 let kirillChanceMultiplier = 1;
@@ -95,13 +121,20 @@ function loadGame() {
     upgrade3Cost = data.upgrade3Cost || 5000;
     upgrade4Cost = data.upgrade4Cost || 25000;
     upgrade5Cost = data.upgrade5Cost || 125000;
+    upgrade6Cost = data.upgrade6Cost || 250000;
+    upgrade7Cost = data.upgrade7Cost || 1000000;
+    upgrade8Cost = data.upgrade8Cost || 5000000;
     kirillChanceMultiplier = data.kirillChanceMultiplier || 1;
     kirillUpgradeCost = data.kirillUpgradeCost || 500;
+    finalUpgradeCost = data.finalUpgradeCost || 20000000;
+    finalUpgradeOwned = data.finalUpgradeOwned || false;
     nameCollection = data.nameCollection || {};
     namePoints = data.namePoints || {};
     totalClicks = data.totalClicks || 0;
     startTime = data.startTime || Date.now();
     lastReward = data.lastReward || 0;
+    streak = data.streak || 0;
+    lastClickAt = data.lastClickAt || 0;
   }
   window.nameCollection = nameCollection;
   window.namePoints = namePoints;
@@ -118,15 +151,37 @@ function saveGame() {
     upgrade3Cost,
     upgrade4Cost,
     upgrade5Cost,
+    upgrade6Cost,
+    upgrade7Cost,
+    upgrade8Cost,
     kirillChanceMultiplier,
     nameCollection,
     namePoints,
     kirillUpgradeCost,
+    finalUpgradeCost,
+    finalUpgradeOwned,
     totalClicks,
     startTime,
-    lastReward
+    lastReward,
+    streak,
+    lastClickAt
   };
   localStorage.setItem('nameClickerGame', JSON.stringify(data));
+}
+
+function updateStreakBonus() {
+  const now = Date.now();
+  const windowMs = finalUpgradeOwned ? 2800 : 2200;
+  if (now - lastClickAt <= windowMs) {
+    streak += 1;
+  } else {
+    streak = 0;
+  }
+  lastClickAt = now;
+  const maxStreak = finalUpgradeOwned ? 40 : 25;
+  const step = finalUpgradeOwned ? 0.04 : 0.03;
+  const capped = Math.min(streak, maxStreak);
+  streakMultiplier = 1 + capped * step;
 }
 
 function getRandomWeighted() {
@@ -146,7 +201,10 @@ function getRandomWeighted() {
     }
   }
 
-  const reward = getNameReward(chosen, weightedNames[chosen]);
+  updateStreakBonus();
+  const finalClickMultiplier = finalUpgradeOwned ? 1.5 : 1;
+  const baseReward = getNameReward(chosen, weightedNames[chosen]);
+  const reward = Math.max(1, Math.round(baseReward * streakMultiplier * finalClickMultiplier));
   counter += reward;
   totalClicks++;
   lastReward = reward;
@@ -217,6 +275,9 @@ function updateUI() {
   if (plastReward) {
     plastReward.textContent = `+${lastReward}`;
   }
+  if (pstreak) {
+    pstreak.textContent = `Streak: ${streak} (x${streakMultiplier.toFixed(2)})`;
+  }
   updateStats();
   updateButtonStates();
 }
@@ -255,7 +316,11 @@ function updateButtonStates() {
   document.getElementById('upgrade3').disabled = !canAfford(upgrade3Cost);
   document.getElementById('upgrade4').disabled = !canAfford(upgrade4Cost);
   document.getElementById('upgrade5').disabled = !canAfford(upgrade5Cost);
+  document.getElementById('upgrade6').disabled = !canAfford(upgrade6Cost);
+  document.getElementById('upgrade7').disabled = !canAfford(upgrade7Cost);
+  document.getElementById('upgrade8').disabled = !canAfford(upgrade8Cost);
   document.getElementById('upgradeKirill').disabled = !canAfford(kirillUpgradeCost);
+  document.getElementById('upgradeFinal').disabled = finalUpgradeOwned || !canAfford(finalUpgradeCost);
   updateUpgradeTexts();
 }
 
@@ -270,8 +335,17 @@ function updateUpgradeTexts() {
     `<span class="upgrade-name">Name Writer</span><span class="upgrade-desc"> +1000 CPS</span><span class="upgrade-cost"> Cost: ${upgrade4Cost}</span>`;
   document.getElementById('upgrade5').innerHTML = 
     `<span class="upgrade-name">Professianal Name Writer</span><span class="upgrade-desc"> +5000 CPS</span><span class="upgrade-cost"> Cost: ${upgrade5Cost}</span>`;
+  document.getElementById('upgrade6').innerHTML = 
+    `<span class="upgrade-name">Phd level Name Writer</span><span class="upgrade-desc"> +10000 CPS</span><span class="upgrade-cost"> Cost: ${upgrade6Cost}</span>`;
+  document.getElementById('upgrade7').innerHTML = 
+    `<span class="upgrade-name">Mythic Name Writer</span><span class="upgrade-desc"> +50000 CPS</span><span class="upgrade-cost"> Cost: ${upgrade7Cost}</span>`;
+  document.getElementById('upgrade8').innerHTML = 
+    `<span class="upgrade-name">Legendary Name Writer</span><span class="upgrade-desc"> +250000 CPS</span><span class="upgrade-cost"> Cost: ${upgrade8Cost}</span>`;
   document.getElementById('upgradeKirill').innerHTML = 
     `<span class="upgrade-name">Kirill Buff</span><span class="upgrade-desc"> x${kirillChanceMultiplier.toFixed(1)} Chance</span><span class="upgrade-cost">Cost: ${kirillUpgradeCost}</span>`;
+  document.getElementById('upgradeFinal').innerHTML = finalUpgradeOwned
+    ? `<span class="upgrade-name">Name Legend</span><span class="upgrade-desc"> Owned</span><span class="upgrade-cost">Final upgrade</span>`
+    : `<span class="upgrade-name">Name Legend</span><span class="upgrade-desc"> +7500000 CPS · x1.5 click rewards · bigger streaks</span><span class="upgrade-cost"> Cost: ${finalUpgradeCost}</span>`;
 }
 
 // Upgrade 1: +3 CPS
@@ -334,12 +408,62 @@ function upgrade5(){
   }
 }
 
+// Upgrade 6: +10000 CPS
+function upgrade6(){
+  if (counter >= upgrade6Cost){
+    counter -= upgrade6Cost;
+    cps += 10000;
+    upgrade6Cost = Math.floor(upgrade6Cost * 1.5);
+    updateUI();
+    saveGame();
+    playClickSound();
+  }
+}
+
+// Upgrade 7: +50000 CPS
+function upgrade7(){
+  if (counter >= upgrade7Cost){
+    counter -= upgrade7Cost;
+    cps += 50000;
+    upgrade7Cost = Math.floor(upgrade7Cost * 1.5);
+    updateUI();
+    saveGame();
+    playClickSound();
+  }
+}
+
+// Upgrade 8: +250000 CPS
+function upgrade8(){
+  if (counter >= upgrade8Cost){
+    counter -= upgrade8Cost;
+    cps += 250000;
+    upgrade8Cost = Math.floor(upgrade8Cost * 1.5);
+    updateUI();
+    saveGame();
+    playClickSound();
+  }
+}
+
 // Kirill chance upgrade
 function upgradeKirill() {
   if (counter >= kirillUpgradeCost) {
     counter -= kirillUpgradeCost;
     kirillChanceMultiplier += 0.2; // increase Kirill chance
     kirillUpgradeCost = Math.floor(kirillUpgradeCost * 2);
+    updateUI();
+    saveGame();
+    playClickSound();
+  }
+}
+
+function upgradeFinal() {
+  if (finalUpgradeOwned) {
+    return;
+  }
+  if (counter >= finalUpgradeCost) {
+    counter -= finalUpgradeCost;
+    finalUpgradeOwned = true;
+    cps += 7500000;
     updateUI();
     saveGame();
     playClickSound();
@@ -357,12 +481,20 @@ function resetGame() {
     upgrade3Cost = 5000;
     upgrade4Cost = 25000;
     upgrade5Cost = 125000;
+    upgrade6Cost = 250000;
+    upgrade7Cost = 1000000;
+    upgrade8Cost = 5000000;
     kirillChanceMultiplier = 1;
     kirillUpgradeCost = 500;
+    finalUpgradeCost = 2000000;
+    finalUpgradeOwned = false;
     startTime = Date.now();
     nameCollection = {};
     namePoints = {};
     lastReward = 0;
+    streak = 0;
+    streakMultiplier = 1;
+    lastClickAt = 0;
     window.nameCollection = nameCollection;
     window.namePoints = namePoints;
     pname.textContent = '-';
@@ -378,7 +510,11 @@ document.getElementById('upgrade2').addEventListener('click', upgrade2);
 document.getElementById('upgrade3').addEventListener('click', upgrade3);
 document.getElementById('upgrade4').addEventListener('click', upgrade4);
 document.getElementById('upgrade5').addEventListener('click', upgrade5);
+document.getElementById('upgrade6').addEventListener('click', upgrade6);
+document.getElementById('upgrade7').addEventListener('click', upgrade7);
+document.getElementById('upgrade8').addEventListener('click', upgrade8);
 document.getElementById('upgradeKirill').addEventListener('click', upgradeKirill);
+document.getElementById('upgradeFinal').addEventListener('click', upgradeFinal);
 document.getElementById('resetBtn').addEventListener('click', resetGame);
 
 // CPS interval
@@ -400,4 +536,3 @@ setInterval(() => {
 
 // Load game on startup
 loadGame();
-

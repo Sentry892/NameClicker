@@ -7,32 +7,48 @@
   <link rel="stylesheet" href="index.css">
 </head>
 <body>
-  <div class="container">
-    <!-- Left side -->
-    <div class="counter-box">
-      <p class="counter">0</p>
-      <p class="name">-</p>
-      <p id="lastReward">+0</p>
-      <p class="cps">CPS: 0</p>
-      <p id="totalClicks">Total: 0</p>
-      <p id="playtime">0s</p>
-      <div class="stats-panel">
-        <p id="topNamePoints">Top (points): -</p>
-        <p id="topNameClicks">Top (clicks): -</p>
-        <p id="avgReward">Avg reward: 0</p>
+  <div class="game">
+    <!-- Left: main clicker -->
+    <div class="panel panel-left">
+      <div class="counter-stack">
+        <p class="counter">0</p>
+        <p class="name">-</p>
+        <p id="lastReward">+0</p>
       </div>
       <button class="clicker" id="clickBtn">Click</button>
       <button class="collection-btn" id="collectionBtn">Collection</button>
     </div>
 
-    <!-- Right side -->
-    <div class="upgrades">
-      <button class="upgrade1" id="upgrade1">+3 CPS (50)</button>
-      <button class="upgrade2" id="upgrade2">+10 CPS (1000)</button>
-      <button class="upgrade3" id="upgrade3">+100 CPS (5000)</button>
-      <button class="upgrade4" id="upgrade4">+1000 CPS (25000)</button>
-      <button class="upgrade5" id="upgrade5">+5000 CPS (125000)</button>
-      <button class="upgradeKirill" id="upgradeKirill">Kirill x1.2 (500)</button>
+    <!-- Center: stats -->
+    <div class="panel panel-center">
+      <div class="stats-main">
+        <p class="cps">CPS: 0</p>
+        <p id="totalClicks">Total: 0</p>
+        <p id="playtime">0s</p>
+      </div>
+      <div class="stats-panel">
+        <p id="topNamePoints">Top (points): -</p>
+        <p id="topNameClicks">Top (clicks): -</p>
+        <p id="avgReward">Avg reward: 0</p>
+        <p id="streak">Streak: 0 (x1.00)</p>
+      </div>
+    </div>
+
+    <!-- Right: upgrades -->
+    <div class="panel panel-right upgrades">
+      <div class="panel-title">Upgrades</div>
+      <div class="upgrade-list">
+        <button class="upgrade1" id="upgrade1">+3 CPS (50)</button>
+        <button class="upgrade2" id="upgrade2">+10 CPS (1000)</button>
+        <button class="upgrade3" id="upgrade3">+100 CPS (5000)</button>
+        <button class="upgrade4" id="upgrade4">+1000 CPS (25000)</button>
+        <button class="upgrade5" id="upgrade5">+5000 CPS (125000)</button>
+        <button class="upgrade6" id="upgrade6">+10000 CPS (250000)</button>
+        <button class="upgrade7" id="upgrade7">+50000 CPS (1000000)</button>
+        <button class="upgrade8" id="upgrade8">+250000 CPS (5000000)</button>
+        <button class="upgradeKirill" id="upgradeKirill">Kirill x1.2 (500)</button>
+        <button class="upgradeFinal" id="upgradeFinal">Final upgrade (20000000)</button>
+      </div>
       <button class="reset-btn" id="resetBtn">Reset</button>
     </div>
   </div>
